@@ -6,9 +6,8 @@ from tensorflow.keras import layers, models, optimizers, callbacks
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ---------------------------
 # Utility: Plot training curves
-# ---------------------------
+
 def plot_training_curves(history):
     # Plot Loss
     plt.figure(figsize=(8, 6))
@@ -30,9 +29,9 @@ def plot_training_curves(history):
     plt.legend()
     plt.show()
 
-# ---------------------------
+
 # Training function using MobileNetV2 for Transfer Learning
-# ---------------------------
+
 def train_model(train_dir, val_dir, img_size=(224, 224), batch_size=32,
                 epochs=20, model_save_path="pcos_classifier_mobilenetv2.keras"):
     # Load datasets from directory with RGB images
@@ -75,7 +74,7 @@ def train_model(train_dir, val_dir, img_size=(224, 224), batch_size=32,
     # Build the model
     inputs = tf.keras.Input(shape=input_shape)
     x = data_augmentation(inputs)
-    # Preprocess inputs as required by MobileNetV2
+    # Preprocess inputs - required by MobileNetV2
     x = tf.keras.applications.mobilenet_v2.preprocess_input(x)
     x = base_model(x, training=False)
     x = layers.GlobalAveragePooling2D()(x)
@@ -112,9 +111,9 @@ def train_model(train_dir, val_dir, img_size=(224, 224), batch_size=32,
 
     return model
 
-# ---------------------------
+
 # Inference: Load and preprocess image
-# ---------------------------
+
 def load_and_preprocess_image(image_path, target_size=(224, 224)):
     """
     Loads an image as RGB, resizes it, and converts it to a numpy array.
@@ -127,9 +126,9 @@ def load_and_preprocess_image(image_path, target_size=(224, 224)):
     # to do it here.
     return img_array
 
-# ---------------------------
+
 # Inference: Detect PCOS using the saved model
-# ---------------------------
+
 def detect_pcos(image_path, model_path="pcos_classifier_mobilenetv2.keras", threshold=0.5):
     """
     Loads the saved model and predicts if the input image shows PCOS.
