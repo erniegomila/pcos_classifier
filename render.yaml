@@ -1,0 +1,16 @@
+# render.yaml
+
+services:
+  - type: web
+    name: pcos-ultrasound-detector
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: >
+      python -m streamlit run app.py \
+      --server.port $PORT \
+      --server.address 0.0.0.0 \
+      --server.enableCORS false
+
+    pythonVersion: 3.10
