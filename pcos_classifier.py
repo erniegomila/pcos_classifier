@@ -6,6 +6,7 @@ from tensorflow.keras import layers, models, optimizers, callbacks
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 # Utility: Plot training curves
 
 def plot_training_curves(history):
@@ -121,9 +122,6 @@ def load_and_preprocess_image(image_path, target_size=(224, 224)):
     img = tf.keras.utils.load_img(image_path, target_size=target_size, color_mode='rgb')
     img_array = tf.keras.utils.img_to_array(img)
     img_array = np.expand_dims(img_array, axis=0)
-    # The model expects images preprocessed via MobileNetV2.preprocess_input,
-    # but since that is applied in the model during training, you don't need
-    # to do it here.
     return img_array
 
 
@@ -148,19 +146,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Train PCOS classifier using transfer learning with MobileNetV2 or detect PCOS on an image."
     )
+    parser.add_argument("--download", action="store_true", help="Download Kaggle dataset before training")
+    parser.add_argument("--dataset", type=str, default="erniegomila/pcos-classifier",
+                        help="Kaggle dataset slug (username/dataset-name)")
     parser.add_argument("--train", action="store_true", help="Train the model")
     parser.add_argument("--detect", type=str, help="Path to an image for PCOS detection")
-    parser.add_argument("--train_dir", type=str, default="/path/to/train_dir",
+    parser.add_argument("--train_dir", type=str, default="data/train",
                         help="Path to the training data directory")
-    parser.add_argument("--val_dir", type=str, default="/path/to/val_dir",
+    parser.add_argument("--val_dir", type=str, default="data/val",
                         help="Path to the validation data directory")
     parser.add_argument("--model_path", type=str, default="pcos_classifier_mobilenetv2.keras",
                         help="Path to save or load the model")
     args = parser.parse_args()
+
+    if args.download:
+        download_and_extract_dataset(args.dataset, local_path='data', unzip=True)
 
     if args.train:
         train_model(args.train_dir, args.val_dir, model_save_path=args.model_path)
     elif args.detect:
         detect_pcos(args.detect, model_path=args.model_path)
     else:
-        print("Please specify either --train or --detect with a valid image path.")
+        print("Please specify --download and/or --train, or --detect with a valid image path.")
